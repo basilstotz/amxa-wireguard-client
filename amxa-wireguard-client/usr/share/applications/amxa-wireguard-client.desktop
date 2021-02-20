@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=WireGuard-Client
-Comment=WireGuard-Client
+Name=amXa-WireGuard-Client
+Comment=amXa-WireGuard-Client
 Exec=lxqt-sudo amxa-wireguard-client
 Terminal=false
 Type=Application
