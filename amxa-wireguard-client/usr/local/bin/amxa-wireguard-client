@@ -1,0 +1,13 @@
+#!/bin/sh
+
+test $(id --user) = 0 || exec $0
+
+systemctl start wg-vpn.service
+zenity --progress --pulsate --auto-close --title="Wireguard-VPN" --text="The VPN is running..."
+systemctl stop wg-vpn.service
+zenity --info --text="The VPN is closed!" --title="Wireguard-VPN"
+
+exit 0
+
+
+

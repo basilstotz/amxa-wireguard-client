@@ -1,0 +1,76 @@
+q#!/bin/sh
+
+#. ./vpn.dat
+
+if test -f /etc/default/amxa-wireguard-client;then
+  . /etc/default/amxa-wireguard-client
+else
+  exit 1
+fi
+
+#privat=
+#local="172.16.9.39/24"
+#public=
+#remote=
+#endpoint=
+
+
+device="wg0"
+
+address=$local
+
+trap link_down EXIT
+trap exit HUP INT QUIT KILL TERM
+
+
+link_up(){
+#    device=$1
+#    address=$2
+
+    test -n $(echo $address | cut -d/ -f2) || return 1
+    network=$(ipcalc $address | grep Network | xargs | cut -d\  -f2)
+    for N in $(ip route | grep -v default | cut -d\  -f1);do
+	test "$N" = "$network" && return 1
+    done
+
+    ip link add dev $device type wireguard; 
+    ip link set $device up; 
+    ip address add dev $device $address; 
+    ip link set multicast on dev $device;
+    ip route add $network dev $device;
+}
+
+link_down(){
+#    device=$1
+    ip link del $device
+}
+
+peer_add(){
+#    device=$1
+#    privat=$2
+#    public=$3
+#    endpoint=$4
+    
+    address=$(ip addr | grep "inet .* $1" | xargs | cut -d\  -f2)
+    echo $device $privat $public $endpoint $address
+    return
+    wg set $device private-key $private peer $public endpoint $endpoint allowed-ips ${address}/12; 
+}
+
+
+peer_del(){
+#    device=$1
+#    public=$2
+    echo peer_del $device $public
+    return
+    wg set $device peer $public remove
+}
+
+
+link_up
+#peer_add
+while true;do ping $remote;sleep 10;done
+
+exit 0
+
+ 

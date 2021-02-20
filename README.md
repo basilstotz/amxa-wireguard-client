@@ -1,1 +1,0 @@
-# amxa-wireguard-client

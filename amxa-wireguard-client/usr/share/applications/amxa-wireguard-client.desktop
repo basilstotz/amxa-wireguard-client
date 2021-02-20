@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=WireGuard-Client
+Comment=WireGuard-Client
+Exec=lxqt-sudo amxa-wireguard-client
+Terminal=false
+Type=Application
+Icon=wireguard.png
+Categories=System;VPN;
+Keywords=System;VPN

@@ -1,0 +1,13 @@
+[Unit]
+Description=Wireguard Service VPN
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=60
+ExecStart=/usr/local/sbin/amxa-wireguard-client-daemon
+
+[Install]
+WantedBy=multi-user.target
