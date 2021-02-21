@@ -1,6 +1,7 @@
-q#!/bin/sh
+#!/bin/sh
 
-#. ./vpn.dat
+
+#get the params ....
 
 if test -f /etc/default/amxa-wireguard-client;then
   . /etc/default/amxa-wireguard-client
@@ -8,16 +9,24 @@ else
   exit 1
 fi
 
-#privat=
-#local="172.16.9.39/24"
-#public=
-#remote=
-#endpoint=
+test -f $PFAD/publickey || exit 1
+test -f $PFAD/privatkey || exit 1
 
+if test -f $PFAD/endpoint.txt;then
+     . $PFAD/endpoint.txt
+     test -n "$endpoint" || exit 1
+     test -n "$port" || exit 1
+     test -n "$local" || exit 1
+else
+    exit 1
+fi
 
 device="wg0"
 
 address=$local
+
+
+#and go ....
 
 trap link_down EXIT
 trap exit HUP INT QUIT KILL TERM

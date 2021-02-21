@@ -1,10 +1,37 @@
 #!/bin/sh
 
-test $(id --user) = 0 || exec $0
+test $(id --user) = 0 || exec sudo $0
 
-systemctl start wg-vpn.service
+PFAD="/home/$SUDO_USER/wireguard/"
+
+test -d $PFAD || mkdir -p $PFAD
+if ! test -f $PFAD/publickey;then
+    if ! test -f $PFAD/privatkey;then
+        (umask 077;wg genkey > $PFAD/privatkey)
+        (umask 077;cat $PFAD/privatkey | wg pubkey > $PFAD/publickey)
+        zenity --info --width=600 --title="Wireguard-VPN" \
+	       --text="$(printf 'Share this key:    ')$(cat $PFAD/publickey)"
+        chown -R $SUDO_USER $PFAD
+        exit 0
+    fi
+    (umask 077;cat $PFAD/privatkey | wg pubkey > $PFAD/publickey)
+    chown -R $SUDO_USER $PFAD
+fi
+
+if ! test -f x$PFAD/endpoint.txt;then
+    zenity --info --width=600 --title="Wireguard-VPN" \
+    --text="$(printf 'Share this key:    ')$(cat $PFAD/publickey)     and get your login data!"
+    exit 0
+fi
+
+echo "PFAD=$PFAD" > /etc/default/amxa-wireguard-client
+
+exit
+
+
+systemctl start amxa-wireguard-client.service
 zenity --progress --pulsate --auto-close --title="Wireguard-VPN" --text="The VPN is running..."
-systemctl stop wg-vpn.service
+systemctl stop amxa-wireguard-client.service
 zenity --info --text="The VPN is closed!" --title="Wireguard-VPN"
 
 exit 0

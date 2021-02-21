@@ -3,7 +3,7 @@ Section: unknown
 Priority: extra
 Maintainer: Basil Stotz <stotz@amxa.ch>
 Package: amxa-wireguard-client
-Version: 1613836236 
+Version: 1613836920 
 Architecture: amd64
 Depends: zenity
 Description: Setup a Service Tunnel to Amxa
